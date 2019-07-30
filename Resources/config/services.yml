@@ -1,0 +1,24 @@
+services:
+    oro_html5_purifier.provider.html_tag_provider:
+        class: Oro\Bundle\Html5PurifierBundle\Provider\Html5TagProvider
+        decorates: oro_form.provider.html_tag_provider
+        arguments:
+            - []
+            - '%oro_html5_purifier.html_purifier_mode%'
+            - '%oro_html5_purifier.html_purifier_iframe_domains%'
+            - '%oro_html5_purifier.html_purifier_uri_schemes%'
+
+    oro_html5_purifier.type.extension.rich_text:
+        class: Oro\Bundle\Html5PurifierBundle\Form\Type\Extension\OroRichTextHtml5Extension
+        arguments:
+            - '@oro_html5_purifier.provider.html_tag_provider'
+            - '%kernel.cache_dir%'
+        tags:
+            - { name: form.type_extension, alias: oro_rich_text, extended_type: Oro\Bundle\FormBundle\Form\Type\OroRichTextType }
+
+    oro_html5_purifier.html_tag_helper:
+        class: Oro\Bundle\Html5PurifierBundle\Tools\Html5TagHelper
+        decorates: oro_ui.html_tag_helper
+        arguments:
+            - '@oro_html5_purifier.provider.html_tag_provider'
+            - '%kernel.cache_dir%'

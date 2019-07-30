@@ -1,0 +1,32 @@
+{
+    "name": "oro/html5-purifier",
+    "description": "Adding HTML5 tags support to WYSIWYG editors",
+    "license": "OSL-3.0",
+    "authors": [
+        {
+            "name": "Oro, Inc",
+            "homepage": "https://oroinc.com"
+        }
+    ],
+    "autoload": {
+        "psr-4": { "Oro\\Bundle\\Html5PurifierBundle\\": "" },
+        "exclude-from-classmap": ["/Tests/"]
+    },
+    "require": {
+        "oro/platform": "3.1.*",
+        "xemlock/htmlpurifier-html5": "0.1.*"
+    },
+    "repositories": {
+        "oro": {
+            "type": "composer",
+            "url": "https://packagist.orocrm.com"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-master": "3.1-dev"
+        }
+    }
+}

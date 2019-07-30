@@ -1,0 +1,2 @@
+bundles:
+    - { name: Oro\Bundle\Html5PurifierBundle\OroHtml5PurifierBundle, priority: 0 }
