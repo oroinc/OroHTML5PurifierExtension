@@ -14,7 +14,7 @@
     },
     "require": {
         "oro/platform": "3.1.*",
-        "xemlock/htmlpurifier-html5": "0.1.*"
+        "xemlock/htmlpurifier-html5": "0.1.10"
     },
     "repositories": {
         "oro": {
