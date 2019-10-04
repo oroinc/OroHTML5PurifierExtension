@@ -17,6 +17,9 @@ class Html5TagHelperTest extends \PHPUnit\Framework\TestCase
     /** @var Html5TagProvider|\PHPUnit\Framework\MockObject\MockObject */
     protected $html5TagProvider;
 
+    /** @var Html5TagProvider|\PHPUnit\Framework\MockObject\MockObject */
+    private $html5TagProviderStrict;
+
     /** @var string */
     private $cachePath;
 
@@ -24,7 +27,10 @@ class Html5TagHelperTest extends \PHPUnit\Framework\TestCase
     {
         $this->cachePath = $this->getTempDir('cache_test_data');
         $this->html5TagProvider = $this->createMock(Html5TagProvider::class);
+        $this->html5TagProviderStrict = $this->createMock(Html5TagProvider::class);
+
         $this->helper = new Html5TagHelper($this->html5TagProvider, $this->cachePath);
+        $this->helper->setHtmlTagProviderStrict($this->html5TagProviderStrict);
     }
 
     protected function tearDown()

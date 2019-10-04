@@ -14,6 +14,9 @@ class Html5TagHelper extends HtmlTagHelper
     /** @var Html5TagProvider */
     protected $htmlTagProvider;
 
+    /** @var Html5TagProvider */
+    private $htmlTagProviderStrict;
+
     /**
      * @param Html5TagProvider $htmlTagProvider
      * @param string|null $cacheDir
@@ -29,15 +32,36 @@ class Html5TagHelper extends HtmlTagHelper
     }
 
     /**
+     * @param Html5TagProvider $htmlTagProviderStrict
+     */
+    public function setHtmlTagProviderStrict(Html5TagProvider $htmlTagProviderStrict)
+    {
+        $this->htmlTagProviderStrict = $htmlTagProviderStrict;
+    }
+
+    /**
      * {@inheritdoc}
      */
     public function sanitize($string)
     {
         $transformer = new SanitizeHTML5Transformer(
             $this->htmlTagProvider,
+            implode(',', $this->htmlTagProviderStrict->getAllowedElements()),
+            $this->cacheDir
+        );
+        $transformer->setHtmlTagProviderStrict($this->htmlTagProviderStrict);
+
+        return $transformer->sanitizeStrict($string);
+    }
+
+    public function sanitizeWysiwyg($string)
+    {
+        $transformer = new SanitizeHTML5Transformer(
+            $this->htmlTagProvider,
             implode(',', $this->htmlTagProvider->getAllowedElements()),
             $this->cacheDir
         );
+        $transformer->setHtmlTagProviderStrict($this->htmlTagProviderStrict);
 
         return $transformer->transform($string);
     }
@@ -53,6 +77,7 @@ class Html5TagHelper extends HtmlTagHelper
                 null,
                 $this->cacheDir
             );
+            $this->purifyTransformer->setHtmlTagProviderStrict($this->htmlTagProviderStrict);
         }
 
         return trim($this->purifyTransformer->transform($string));

@@ -23,16 +23,22 @@ class ElementsConfigurationCompilerPassTest extends \PHPUnit\Framework\TestCase
         $decoratedDefinition->expects($this->once())
             ->method('replaceArgument')
             ->with(0, $tags);
+        $decoratedStrictDefinition = $this->createMock(Definition::class);
+        $decoratedStrictDefinition->expects($this->once())
+            ->method('replaceArgument')
+            ->with(0, $tags);
 
-        $container->expects($this->exactly(2))
+        $container->expects($this->exactly(3))
             ->method('getDefinition')
             ->withConsecutive(
                 ['oro_form.provider.html_tag_provider'],
-                ['oro_html5_purifier.provider.html_tag_provider']
+                ['oro_html5_purifier.provider.html_tag_provider'],
+                ['oro_html5_purifier.provider.html_tag_provider_strict']
             )
             ->willReturnOnConsecutiveCalls(
                 $tagProviderDefinition,
-                $decoratedDefinition
+                $decoratedDefinition,
+                $decoratedStrictDefinition
             );
 
         $compilerPass = new ElementsConfigurationCompilerPass();

@@ -8,6 +8,15 @@ services:
             - '%oro_html5_purifier.html_purifier_iframe_domains%'
             - '%oro_html5_purifier.html_purifier_uri_schemes%'
 
+    oro_html5_purifier.provider.html_tag_provider_strict:
+        class: Oro\Bundle\Html5PurifierBundle\Provider\Html5TagProvider
+        decorates: oro_form.provider.html_tag_provider
+        arguments:
+            - []
+            - 'strict'
+            - '%oro_html5_purifier.html_purifier_iframe_domains%'
+            - '%oro_html5_purifier.html_purifier_uri_schemes%'
+
     oro_html5_purifier.type.extension.rich_text:
         class: Oro\Bundle\Html5PurifierBundle\Form\Type\Extension\OroRichTextHtml5Extension
         arguments:
@@ -22,3 +31,5 @@ services:
         arguments:
             - '@oro_html5_purifier.provider.html_tag_provider'
             - '%kernel.cache_dir%'
+        calls:
+            - ['setHtmlTagProviderStrict', ['@oro_html5_purifier.provider.html_tag_provider_strict']]

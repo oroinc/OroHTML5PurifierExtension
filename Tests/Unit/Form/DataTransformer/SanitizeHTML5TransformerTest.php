@@ -28,7 +28,15 @@ class SanitizeHTML5TransformerTest extends \PHPUnit\Framework\TestCase
             ->method('getUriSchemes')
             ->willReturn(['http' => true, 'https' => true]);
 
+        /** @var Html5TagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProviderStrict */
+        $htmlTagProviderStrict = $this->createMock(Html5TagProvider::class);
+        $htmlTagProviderStrict->expects($this->never())
+            ->method('getIframeRegexp');
+        $htmlTagProviderStrict->expects($this->never())
+            ->method('getUriSchemes');
+
         $transformer = new SanitizeHTML5Transformer($htmlTagProvider, $allowableTags);
+        $transformer->setHtmlTagProviderStrict($htmlTagProviderStrict);
 
         $this->assertEquals(
             $expected,
@@ -38,6 +46,42 @@ class SanitizeHTML5TransformerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(
             $expected,
             $transformer->reverseTransform($value)
+        );
+    }
+
+    /**
+     * @param string $value
+     * @param string $allowableTags
+     * @param string $expected
+     *
+     * @dataProvider sanitizeStrictDataProvider
+     */
+    public function testSanitizeStrict($value, $allowableTags, $expected)
+    {
+        /** @var Html5TagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProvider */
+        $htmlTagProvider = $this->createMock(Html5TagProvider::class);
+        $htmlTagProvider->expects($this->never())
+            ->method('isPurificationNeeded');
+        $htmlTagProvider->expects($this->never())
+            ->method('getIframeRegexp');
+        $htmlTagProvider->expects($this->never())
+            ->method('getUriSchemes');
+
+        /** @var Html5TagProvider|\PHPUnit\Framework\MockObject\MockObject $htmlTagProviderStrict */
+        $htmlTagProviderStrict = $this->createMock(Html5TagProvider::class);
+        $htmlTagProviderStrict->expects($this->once())
+            ->method('getIframeRegexp')
+            ->willReturn('');
+        $htmlTagProviderStrict->expects($this->once())
+            ->method('getUriSchemes')
+            ->willReturn([]);
+
+        $transformer = new SanitizeHTML5Transformer($htmlTagProvider, $allowableTags);
+        $transformer->setHtmlTagProviderStrict($htmlTagProviderStrict);
+
+        $this->assertEquals(
+            $expected,
+            $transformer->sanitizeStrict($value)
         );
     }
 
@@ -139,6 +183,42 @@ class SanitizeHTML5TransformerTest extends \PHPUnit\Framework\TestCase
                 'iframe[id|allowfullscreen|src]',
                 '<iframe id="video-iframe" allowfullscreen></iframe>'
             ],
+        ];
+    }
+
+    public function sanitizeStrictDataProvider()
+    {
+        return [
+            'default' => ['sometext', null, 'sometext'],
+            'not allowed tag' => ['<p>sometext</p>', 'a', 'sometext'],
+            'allowed tag' => ['<p>sometext</p>', 'p', '<p>sometext</p>'],
+            'mixed' => ['<p>sometext</p></br>', 'p', '<p>sometext</p>'],
+            'attribute' => ['<p class="class">sometext</p>', 'p[class]', '<p class="class">sometext</p>'],
+            'mixed attribute' => [
+                '<p class="class">sometext</p><span data-attr="mixed">',
+                'p[class]',
+                '<p class="class">sometext</p>'
+            ],
+            'prepare allowed' => ['<a>first text</a><c>second text</c>', 'a, b', '<a>first text</a>second text'],
+            'prepare not allowed' => ['<p>sometext</p>', 'a[class]', 'sometext'],
+            'prepare with allowed' => ['<p>sometext</p>', 'a, p[class]', '<p>sometext</p>'],
+            'prepare attribute' => ['<p>sometext</p>', 'a[class], p', '<p>sometext</p>'],
+            'prepare attributes' => ['<p>sometext</p>', 'p[class|style]', '<p>sometext</p>'],
+            'prepare or condition' => ['<p>sometext</p>', 'a[href|target=_blank], b/p', '<p>sometext</p>'],
+            'prepare empty' => ['<p>sometext</p>', '[href|target=_blank],/', 'sometext'],
+            'default attributes set' => ['<p>sometext</p>', '@[style],a', 'sometext'],
+            'default attributes set with allowed' => ['<p>sometext</p>', '@[style],p', '<p>sometext</p>'],
+            'id attribute' => [
+                '<div id="test" data-id="test2">sometext</div>',
+                'div[id]',
+                '<div id="test">sometext</div>'
+            ],
+            'iframe' => [
+                '<p>sometext</p><iframe id="video-iframe" allowfullscreen="" src="https://www.youtube.com/' .
+                'embed/XWyzuVHRe0A? rel=0&amp;iv_load_policy=3&amp;modestbranding=1"></iframe>',
+                'p',
+                '<p>sometext</p>'
+            ]
         ];
     }
 }
