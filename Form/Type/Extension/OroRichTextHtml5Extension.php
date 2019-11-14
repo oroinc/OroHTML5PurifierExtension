@@ -7,6 +7,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Utils\FormUtils;
 use Oro\Bundle\Html5PurifierBundle\Form\DataTransformer\SanitizeHTML5Transformer;
 use Oro\Bundle\Html5PurifierBundle\Provider\Html5TagProvider;
+use Oro\Bundle\UIBundle\Tools\HtmlTagHelper;
 use Symfony\Component\Form\AbstractTypeExtension;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\Form\FormInterface;
@@ -23,6 +24,9 @@ class OroRichTextHtml5Extension extends AbstractTypeExtension
     /** @var string */
     protected $cacheDir;
 
+    /** @var HtmlTagHelper */
+    private $htmlTagHelper;
+
     /**
      * @param Html5TagProvider $htmlTagProvider
      * @param string $cacheDir
@@ -33,6 +37,14 @@ class OroRichTextHtml5Extension extends AbstractTypeExtension
     ) {
         $this->htmlTagProvider = $htmlTagProvider;
         $this->cacheDir = $cacheDir;
+    }
+
+    /**
+     * @param HtmlTagHelper $htmlTagHelper
+     */
+    public function setHtmlTagHelper(HtmlTagHelper $htmlTagHelper): void
+    {
+        $this->htmlTagHelper = $htmlTagHelper;
     }
 
     /**
@@ -49,13 +61,16 @@ class OroRichTextHtml5Extension extends AbstractTypeExtension
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
         if (null !== $options['wysiwyg_options']['valid_elements']) {
+            $transformer = new SanitizeHTML5Transformer(
+                $this->htmlTagProvider,
+                $options['wysiwyg_options']['valid_elements'],
+                $this->cacheDir
+            );
+            $transformer->setHtmlTagHelper($this->htmlTagHelper);
+
             FormUtils::replaceTransformer(
                 $builder,
-                new SanitizeHTML5Transformer(
-                    $this->htmlTagProvider,
-                    $options['wysiwyg_options']['valid_elements'],
-                    $this->cacheDir
-                ),
+                $transformer,
                 'model',
                 function ($transformer, $key) {
                     return is_a($transformer, SanitizeHTMLTransformer::class);

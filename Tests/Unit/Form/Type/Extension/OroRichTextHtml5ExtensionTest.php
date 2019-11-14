@@ -7,6 +7,7 @@ use Oro\Bundle\FormBundle\Form\Type\OroRichTextType;
 use Oro\Bundle\FormBundle\Provider\HtmlTagProvider;
 use Oro\Bundle\Html5PurifierBundle\Form\Type\Extension\OroRichTextHtml5Extension;
 use Oro\Bundle\Html5PurifierBundle\Provider\Html5TagProvider;
+use Oro\Bundle\Html5PurifierBundle\Tools\Html5TagHelper;
 use Oro\Component\Testing\Unit\PreloadedExtension;
 use Symfony\Component\Asset\Context\ContextInterface;
 use Symfony\Component\Asset\Packages;
@@ -36,6 +37,9 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
     /** @var \PHPUnit\Framework\MockObject\MockObject|Html5TagProvider */
     protected $html5TagProvider;
 
+    /** @var \PHPUnit\Framework\MockObject\MockObject|Html5TagHelper */
+    private $htmlTagHelper;
+
     protected function setUp()
     {
         $this->configManager = $this->createMock(ConfigManager::class);
@@ -43,11 +47,14 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
         $this->htmlTagProvider = $this->createMock(HtmlTagProvider::class);
         $this->html5TagProvider = $this->createMock(Html5TagProvider::class);
         $this->context = $this->createMock(ContextInterface::class);
+        $this->htmlTagHelper = $this->createMock(Html5TagHelper::class);
 
         $this->formType = new OroRichTextType($this->configManager, $this->htmlTagProvider, $this->context);
         $this->formType->setAssetHelper($this->assetsHelper);
+        $this->formType->setHtmlTagHelper($this->htmlTagHelper);
 
         $this->extension = new OroRichTextHtml5Extension($this->html5TagProvider);
+        $this->extension->setHtmlTagHelper($this->htmlTagHelper);
 
         parent::setUp();
     }
@@ -143,7 +150,7 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
         foreach ($viewData as $key => $value) {
             $this->assertArrayHasKey($key, $view->vars);
             $this->assertEquals($value['data-page-component-module'], $view->vars[$key]['data-page-component-module']);
-            
+
             $expected = json_decode($value['data-page-component-options'], true);
             ksort($expected);
 
