@@ -169,7 +169,7 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
     {
         $toolbar = [
             'undo redo formatselect bold italic underline | forecolor backcolor | bullist numlist ' .
-            '| alignleft aligncenter alignright alignjustify | link | bdesk_photo | fullscreen'
+            '| code | alignleft aligncenter alignright alignjustify | link | bdesk_photo | fullscreen'
         ];
         $elements = [
             '@[style|class]',
