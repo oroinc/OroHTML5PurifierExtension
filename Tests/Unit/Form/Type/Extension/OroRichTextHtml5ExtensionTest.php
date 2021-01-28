@@ -168,8 +168,8 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
     public function optionsDataProvider()
     {
         $toolbar = [
-            'undo redo formatselect bold italic underline | forecolor backcolor | bullist numlist ' .
-            '| code | alignleft aligncenter alignright alignjustify | link | bdesk_photo | fullscreen'
+            'undo redo | formatselect | bold italic underline | forecolor backcolor | bullist numlist ' .
+            '| code | alignleft aligncenter alignright alignjustify | link image | fullscreen'
         ];
         $elements = [
             '@[style|class]',
@@ -206,12 +206,12 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
             'data-page-component-options' => [
                 'view' => 'oroform/js/app/views/wysiwig-editor/wysiwyg-editor-view',
                 'content_css' => 'css/tinymce/wysiwyg-editor.css',
-                'skin_url' => 'css/tinymce',
-                'plugins' => ['textcolor', 'code', 'link', 'bdesk_photo', 'fullscreen', 'paste', 'lists', 'advlist'],
+                'plugins' => ['code', 'link', 'fullscreen', 'paste', 'lists', 'image', 'advlist'],
                 'toolbar' => $toolbar,
                 'valid_elements' => '',
                 'menubar' => false,
-                'statusbar' => false,
+                'branding' => false,
+                'elementpath' => false,
                 'relative_urls' => false,
                 'remove_script_host' => false,
                 'convert_urls' => true,
@@ -226,12 +226,12 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
             'data-page-component-options' => [
                 'view' => 'oroform/js/app/views/wysiwig-editor/wysiwyg-editor-view',
                 'content_css' => 'css/tinymce/wysiwyg-editor.css',
-                'skin_url' => 'css/tinymce',
-                'plugins' => ['textcolor', 'code', 'link', 'bdesk_photo', 'fullscreen', 'paste', 'lists', 'advlist'],
+                'plugins' => ['code', 'link', 'fullscreen', 'paste', 'lists', 'image', 'advlist'],
                 'toolbar' => $toolbar,
                 'valid_elements' => '',
                 'menubar' => false,
-                'statusbar' => false,
+                'branding' => false,
+                'elementpath' => false,
                 'relative_urls' => false,
                 'remove_script_host' => false,
                 'convert_urls' => true,
@@ -248,12 +248,12 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
             'data-page-component-options' => [
                 'view' => 'oroform/js/app/views/wysiwig-editor/wysiwyg-editor-view',
                 'content_css' => 'css/tinymce/wysiwyg-editor.css',
-                'skin_url' => 'css/tinymce',
-                'plugins' => ['textcolor', 'code', 'link', 'bdesk_photo', 'fullscreen', 'paste', 'lists', 'advlist'],
+                'plugins' => ['code', 'link', 'fullscreen', 'paste', 'lists', 'image', 'advlist'],
                 'toolbar' => $toolbar,
                 'valid_elements' => '',
                 'menubar' => false,
-                'statusbar' => false,
+                'branding' => false,
+                'elementpath' => false,
                 'relative_urls' => false,
                 'remove_script_host' => false,
                 'cache_suffix' => '',
@@ -328,7 +328,7 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
             'wysiwyg_options' => [
                 [
                     'wysiwyg_options' => [
-                        'plugins' => ['textcolor'],
+                        'plugins' => ['link'],
                         'menubar' => true,
                         'statusbar' => false,
                         'toolbar_type' => OroRichTextType::TOOLBAR_SMALL
@@ -343,11 +343,11 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
                         'data-page-component-options' => array_merge(
                             $defaultAttrs['data-page-component-options'],
                             [
-                                'plugins' => ['textcolor'],
+                                'plugins' => ['link'],
                                 'menubar' => true,
+                                'statusbar' => false,
                                 'toolbar' => [
-                                    'undo redo | bold italic underline | bullist numlist link | bdesk_photo | ' .
-                                    'fullscreen'
+                                    'undo redo | bold italic underline | bullist numlist | link image | fullscreen'
                                 ],
                                 'valid_elements' => implode(',', $elements),
                             ]
@@ -359,7 +359,7 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
             'wysiwyg_options with subfolder' => [
                 [
                     'wysiwyg_options' => [
-                        'plugins' => ['textcolor'],
+                        'plugins' => ['link'],
                         'menubar' => true,
                         'statusbar' => false,
                         'toolbar_type' => OroRichTextType::TOOLBAR_SMALL
@@ -374,15 +374,14 @@ class OroRichTextHtml5ExtensionTest extends FormIntegrationTestCase
                         'data-page-component-options' => array_merge(
                             $defaultAttrs['data-page-component-options'],
                             [
-                                'plugins' => ['textcolor'],
+                                'plugins' => ['link'],
                                 'menubar' => true,
+                                'statusbar' => false,
                                 'toolbar' => [
-                                    'undo redo | bold italic underline | bullist numlist link | bdesk_photo | ' .
-                                    'fullscreen'
+                                    'undo redo | bold italic underline | bullist numlist | link image | fullscreen'
                                 ],
                                 'valid_elements' => implode(',', $elements),
-                                'content_css' => 'subfolder/css/tinymce/wysiwyg-editor.css',
-                                'skin_url' => 'subfolder/css/tinymce'
+                                'content_css' => 'subfolder/css/tinymce/wysiwyg-editor.css'
                             ]
                         )
                     ]
